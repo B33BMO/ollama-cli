@@ -32,8 +32,8 @@ DeepSeek, GPT-OSS, Qwen, and more.
 
 ```bash
 # Clone the repository
-git clone https://github.com/b33bmo/ollama-cli-.git
-cd ollama-cli-
+git clone https://github.com/b33bmo/ollama-cli.git
+cd ollama-cli
 
 # Install dependencies
 npm install
