@@ -1,22 +1,22 @@
-# Blackbox CLI
+# Ollama CLI
 
 [![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/google-gemini/gemini-cli/blob/main/LICENSE)
 
-Blackbox CLI is an open-source AI agent powered by Ollama Cloud that brings powerful
+Ollama CLI is an open-source AI agent powered by Ollama Cloud that brings powerful
 language models directly into your terminal. Originally based on Gemini CLI, it has been
 converted to use Ollama's cloud API, providing access to open-source models like
 DeepSeek, GPT-OSS, Qwen, and more.
 
-## 🚀 Why Blackbox CLI?
+## Why Ollama CLI?
 
-- **🌐 Ollama Cloud**: Access to powerful open-source models via Ollama's cloud service
-- **🧠 Multiple Models**: DeepSeek V3.1, GPT-OSS, Qwen, GLM-4.6, and more
-- **🔧 Built-in tools**: File operations, shell commands, web fetching
-- **🔌 Extensible**: MCP (Model Context Protocol) support for custom integrations
-- **💻 Terminal-first**: Designed for developers who live in the command line
-- **🛡️ Open source**: Apache 2.0 licensed
+- **Ollama Cloud**: Access to powerful open-source models via Ollama's cloud service
+- **Multiple Models**: DeepSeek V3.1, GPT-OSS, Qwen, GLM-4.6, and more
+- **Built-in tools**: File operations, shell commands, web fetching
+- **Extensible**: MCP (Model Context Protocol) support for custom integrations
+- **Terminal-first**: Designed for developers who live in the command line
+- **Open source**: Apache 2.0 licensed
 
-## 📦 Installation
+## Installation
 
 ### Pre-requisites
 
@@ -30,8 +30,8 @@ DeepSeek, GPT-OSS, Qwen, and more.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/blackbox-cli.git
-cd blackbox-cli
+git clone https://github.com/b33bmo/ollama-cli-.git
+cd ollama-cli-
 
 # Install dependencies
 npm install
@@ -43,9 +43,9 @@ npm run build
 npm link
 ```
 
-## 🔐 Authentication
+## Authentication
 
-Blackbox CLI uses Ollama Cloud for model access. You'll need an Ollama API key.
+Ollama CLI uses Ollama Cloud for model access. You'll need an Ollama API key.
 
 ### Get Your API Key
 
@@ -68,7 +68,7 @@ blackbox
 # Or set it in your environment before starting
 ```
 
-## 📋 Key Features
+## Key Features
 
 ### Code Understanding & Generation
 
@@ -90,7 +90,7 @@ blackbox
 
 ### Option 2: Gemini API Key
 
-**✨ Best for:** Developers who need specific model control or paid tier access
+**Best for:** Developers who need specific model control or paid tier access
 
 **Benefits:**
 
@@ -106,7 +106,7 @@ gemini
 
 ### Option 3: Vertex AI
 
-**✨ Best for:** Enterprise teams and production workloads
+**Best for:** Enterprise teams and production workloads
 
 **Benefits:**
 
@@ -124,7 +124,7 @@ gemini
 For Google Workspace accounts and other authentication methods, see the
 [authentication guide](./docs/get-started/authentication.md).
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Basic Usage
 
@@ -187,7 +187,7 @@ gemini
 > Give me a summary of all of the changes that went in yesterday
 ```
 
-## 📚 Documentation
+##Documentation
 
 ### Getting Started
 
@@ -261,7 +261,7 @@ custom tools:
 See the [MCP Server Integration guide](./docs/tools/mcp-server.md) for setup
 instructions.
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Gemini CLI is fully open source (Apache 2.0), and we
 encourage the community to:
@@ -277,7 +277,7 @@ standards, and how to submit pull requests.
 Check our [Official Roadmap](https://github.com/orgs/google-gemini/projects/11)
 for planned features and priorities.
 
-## 📖 Resources
+## Resources
 
 - **[Official Roadmap](./ROADMAP.md)** - See what's coming next.
 - **[Changelog](./docs/changelogs/index.md)** - See recent notable updates.
@@ -292,7 +292,7 @@ for planned features and priorities.
 
 See the [Uninstall Guide](docs/cli/uninstall.md) for removal instructions.
 
-## 📄 Legal
+## Legal
 
 - **License**: [Apache License 2.0](LICENSE)
 - **Terms of Service**: [Terms & Privacy](./docs/tos-privacy.md)
@@ -301,5 +301,5 @@ See the [Uninstall Guide](docs/cli/uninstall.md) for removal instructions.
 ---
 
 <p align="center">
-  Built with ❤️ by Google and the open source community
+  Built with ❤️ by Google and the open source community 
 </p>
