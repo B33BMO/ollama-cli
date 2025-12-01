@@ -63,11 +63,11 @@ export OLLAMA_API_KEY="your-api-key-here"
 ### Usage
 
 ```bash
-# Start Blackbox CLI
-blackbox
+# Start Ollama CLI
+ollama
 
 # Select "Use Ollama API Key" when prompted
-# Or set it in your environment before starting
+# Or set it using /auth > enter your api key
 ```
 
 ## Key Features
