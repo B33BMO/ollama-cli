@@ -1,5 +1,5 @@
 # Ollama CLI
-<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/eda6e2e6-c5cc-4045-8b71-a90c4daa1ab3" />
+<img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/eda6e2e6-c5cc-4045-8b71-a90c4daa1ab3" />
 
 [![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/google-gemini/gemini-cli/blob/main/LICENSE)
 
