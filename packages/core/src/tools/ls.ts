@@ -264,7 +264,7 @@ export class LSTool extends BaseDeclarativeTool<LSToolParams, ToolResult> {
     super(
       LSTool.Name,
       'ReadFolder',
-      'Lists the names of files and subdirectories directly within a specified directory path. Can optionally ignore entries matching provided glob patterns.',
+      'Lists files and subdirectories in a directory. REQUIRED parameter: "dir_path" (the directory path to list). Optional: "ignore" (glob patterns to ignore).',
       Kind.Search,
       {
         properties: {

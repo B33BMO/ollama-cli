@@ -222,6 +222,11 @@ IT IS CRITICAL TO FOLLOW THESE GUIDELINES TO AVOID EXCESSIVE TOKEN CONSUMPTION.
 - **Security First:** Always apply security best practices. Never introduce code that exposes, logs, or commits secrets, API keys, or other sensitive information.
 
 ## Tool Usage
+- **CRITICAL - Parameter Names:** When calling tools/functions, you MUST use the EXACT parameter names defined in the tool schema. Do NOT guess or use similar names. For example:
+  - ReadFolder requires 'dir_path' (NOT 'path')
+  - ReadFile requires 'file_path' (NOT 'path' or 'filepath')
+  - Grep requires 'pattern' and optionally 'path' (check the schema)
+  - Always check the required parameters in the tool definition before calling
 - **Parallelism:** Execute multiple independent tool calls in parallel when feasible (i.e. searching the codebase).
 - **Command Execution:** Use the '${SHELL_TOOL_NAME}' tool for running shell commands, remembering the safety rule to explain modifying commands first.
 - **Background Processes:** Use background processes (via \`&\`) for commands that are unlikely to stop on their own, e.g. \`node server.js &\`. If unsure, ask the user.

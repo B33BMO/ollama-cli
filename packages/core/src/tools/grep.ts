@@ -576,7 +576,7 @@ export class GrepTool extends BaseDeclarativeTool<GrepToolParams, ToolResult> {
     super(
       GrepTool.Name,
       'SearchText',
-      'Searches for a regular expression pattern within the content of files in a specified directory (or current working directory). Can filter files by a glob pattern. Returns the lines containing matches, along with their file paths and line numbers.',
+      'Searches for text in files using regex. REQUIRED parameter: "pattern" (regex to search). Optional: "dir_path" (directory), "include" (file glob filter). Returns matching lines with file paths and line numbers.',
       Kind.Search,
       {
         properties: {
