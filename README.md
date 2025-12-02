@@ -1,22 +1,24 @@
-# Blackbox CLI
+# Ollama CLI
+<img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/eda6e2e6-c5cc-4045-8b71-a90c4daa1ab3" />
 
 [![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/google-gemini/gemini-cli/blob/main/LICENSE)
 
-Blackbox CLI is an open-source AI agent powered by Ollama Cloud that brings powerful
+Ollama CLI is an open-source AI agent powered by Ollama Cloud that brings powerful
 language models directly into your terminal. Originally based on Gemini CLI, it has been
 converted to use Ollama's cloud API, providing access to open-source models like
 DeepSeek, GPT-OSS, Qwen, and more.
+<img width="1711" height="564" alt="image" src="https://github.com/user-attachments/assets/b9654377-5b5f-4f31-b5de-60b55c04792c" />
 
-## 🚀 Why Blackbox CLI?
+## Why Ollama CLI?
 
-- **🌐 Ollama Cloud**: Access to powerful open-source models via Ollama's cloud service
-- **🧠 Multiple Models**: DeepSeek V3.1, GPT-OSS, Qwen, GLM-4.6, and more
-- **🔧 Built-in tools**: File operations, shell commands, web fetching
-- **🔌 Extensible**: MCP (Model Context Protocol) support for custom integrations
-- **💻 Terminal-first**: Designed for developers who live in the command line
-- **🛡️ Open source**: Apache 2.0 licensed
+- **Ollama Cloud**: Access to powerful open-source models via Ollama's cloud service
+- **Multiple Models**: DeepSeek V3.1, GPT-OSS, Qwen, GLM-4.6, and more
+- **Built-in tools**: File operations, shell commands, web fetching
+- **Extensible**: MCP (Model Context Protocol) support for custom integrations
+- **Terminal-first**: Designed for developers who live in the command line
+- **Open source**: Apache 2.0 licensed
 
-## 📦 Installation
+## Installation
 
 ### Pre-requisites
 
@@ -30,8 +32,8 @@ DeepSeek, GPT-OSS, Qwen, and more.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/blackbox-cli.git
-cd blackbox-cli
+git clone https://github.com/b33bmo/ollama-cli.git
+cd ollama-cli
 
 # Install dependencies
 npm install
@@ -43,9 +45,9 @@ npm run build
 npm link
 ```
 
-## 🔐 Authentication
+## Authentication
 
-Blackbox CLI uses Ollama Cloud for model access. You'll need an Ollama API key.
+Ollama CLI uses Ollama Cloud for model access. You'll need an Ollama API key.
 
 ### Get Your API Key
 
@@ -61,14 +63,14 @@ export OLLAMA_API_KEY="your-api-key-here"
 ### Usage
 
 ```bash
-# Start Blackbox CLI
-blackbox
+# Start Ollama CLI
+ollama
 
 # Select "Use Ollama API Key" when prompted
-# Or set it in your environment before starting
+# Or set it using /auth > enter your api key
 ```
 
-## 📋 Key Features
+## Key Features
 
 ### Code Understanding & Generation
 
@@ -90,7 +92,7 @@ blackbox
 
 ### Option 2: Gemini API Key
 
-**✨ Best for:** Developers who need specific model control or paid tier access
+**Best for:** Developers who need specific model control or paid tier access
 
 **Benefits:**
 
@@ -106,7 +108,7 @@ gemini
 
 ### Option 3: Vertex AI
 
-**✨ Best for:** Enterprise teams and production workloads
+**Best for:** Enterprise teams and production workloads
 
 **Benefits:**
 
@@ -124,182 +126,3 @@ gemini
 For Google Workspace accounts and other authentication methods, see the
 [authentication guide](./docs/get-started/authentication.md).
 
-## 🚀 Getting Started
-
-### Basic Usage
-
-#### Start in current directory
-
-```bash
-gemini
-```
-
-#### Include multiple directories
-
-```bash
-gemini --include-directories ../lib,../docs
-```
-
-#### Use specific model
-
-```bash
-gemini -m gemini-2.5-flash
-```
-
-#### Non-interactive mode for scripts
-
-Get a simple text response:
-
-```bash
-gemini -p "Explain the architecture of this codebase"
-```
-
-For more advanced scripting, including how to parse JSON and handle errors, use
-the `--output-format json` flag to get structured output:
-
-```bash
-gemini -p "Explain the architecture of this codebase" --output-format json
-```
-
-For real-time event streaming (useful for monitoring long-running operations),
-use `--output-format stream-json` to get newline-delimited JSON events:
-
-```bash
-gemini -p "Run tests and deploy" --output-format stream-json
-```
-
-### Quick Examples
-
-#### Start a new project
-
-```bash
-cd new-project/
-gemini
-> Write me a Discord bot that answers questions using a FAQ.md file I will provide
-```
-
-#### Analyze existing code
-
-```bash
-git clone https://github.com/google-gemini/gemini-cli
-cd gemini-cli
-gemini
-> Give me a summary of all of the changes that went in yesterday
-```
-
-## 📚 Documentation
-
-### Getting Started
-
-- [**Quickstart Guide**](./docs/get-started/index.md) - Get up and running
-  quickly.
-- [**Authentication Setup**](./docs/get-started/authentication.md) - Detailed
-  auth configuration.
-- [**Configuration Guide**](./docs/get-started/configuration.md) - Settings and
-  customization.
-- [**Keyboard Shortcuts**](./docs/cli/keyboard-shortcuts.md) - Productivity
-  tips.
-
-### Core Features
-
-- [**Commands Reference**](./docs/cli/commands.md) - All slash commands
-  (`/help`, `/chat`, etc).
-- [**Custom Commands**](./docs/cli/custom-commands.md) - Create your own
-  reusable commands.
-- [**Context Files (GEMINI.md)**](./docs/cli/gemini-md.md) - Provide persistent
-  context to Gemini CLI.
-- [**Checkpointing**](./docs/cli/checkpointing.md) - Save and resume
-  conversations.
-- [**Token Caching**](./docs/cli/token-caching.md) - Optimize token usage.
-
-### Tools & Extensions
-
-- [**Built-in Tools Overview**](./docs/tools/index.md)
-  - [File System Operations](./docs/tools/file-system.md)
-  - [Shell Commands](./docs/tools/shell.md)
-  - [Web Fetch & Search](./docs/tools/web-fetch.md)
-- [**MCP Server Integration**](./docs/tools/mcp-server.md) - Extend with custom
-  tools.
-- [**Custom Extensions**](./docs/extensions/index.md) - Build and share your own
-  commands.
-
-### Advanced Topics
-
-- [**Headless Mode (Scripting)**](./docs/cli/headless.md) - Use Gemini CLI in
-  automated workflows.
-- [**Architecture Overview**](./docs/architecture.md) - How Gemini CLI works.
-- [**IDE Integration**](./docs/ide-integration/index.md) - VS Code companion.
-- [**Sandboxing & Security**](./docs/cli/sandbox.md) - Safe execution
-  environments.
-- [**Trusted Folders**](./docs/cli/trusted-folders.md) - Control execution
-  policies by folder.
-- [**Enterprise Guide**](./docs/cli/enterprise.md) - Deploy and manage in a
-  corporate environment.
-- [**Telemetry & Monitoring**](./docs/cli/telemetry.md) - Usage tracking.
-- [**Tools API Development**](./docs/core/tools-api.md) - Create custom tools.
-- [**Local development**](./docs/local-development.md) - Local development
-  tooling.
-
-### Troubleshooting & Support
-
-- [**Troubleshooting Guide**](./docs/troubleshooting.md) - Common issues and
-  solutions.
-- [**FAQ**](./docs/faq.md) - Frequently asked questions.
-- Use `/bug` command to report issues directly from the CLI.
-
-### Using MCP Servers
-
-Configure MCP servers in `~/.gemini/settings.json` to extend Gemini CLI with
-custom tools:
-
-```text
-> @github List my open pull requests
-> @slack Send a summary of today's commits to #dev channel
-> @database Run a query to find inactive users
-```
-
-See the [MCP Server Integration guide](./docs/tools/mcp-server.md) for setup
-instructions.
-
-## 🤝 Contributing
-
-We welcome contributions! Gemini CLI is fully open source (Apache 2.0), and we
-encourage the community to:
-
-- Report bugs and suggest features.
-- Improve documentation.
-- Submit code improvements.
-- Share your MCP servers and extensions.
-
-See our [Contributing Guide](./CONTRIBUTING.md) for development setup, coding
-standards, and how to submit pull requests.
-
-Check our [Official Roadmap](https://github.com/orgs/google-gemini/projects/11)
-for planned features and priorities.
-
-## 📖 Resources
-
-- **[Official Roadmap](./ROADMAP.md)** - See what's coming next.
-- **[Changelog](./docs/changelogs/index.md)** - See recent notable updates.
-- **[NPM Package](https://www.npmjs.com/package/@google/gemini-cli)** - Package
-  registry.
-- **[GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)** -
-  Report bugs or request features.
-- **[Security Advisories](https://github.com/google-gemini/gemini-cli/security/advisories)** -
-  Security updates.
-
-### Uninstall
-
-See the [Uninstall Guide](docs/cli/uninstall.md) for removal instructions.
-
-## 📄 Legal
-
-- **License**: [Apache License 2.0](LICENSE)
-- **Terms of Service**: [Terms & Privacy](./docs/tos-privacy.md)
-- **Security**: [Security Policy](SECURITY.md)
-
----
-
-<p align="center">
-  Built with ❤️ by Google and the open source community
-</p>
