@@ -45,6 +45,14 @@ npm run build
 npm link
 ```
 
+```bash
+
+# Or run the installer
+chmod +x install.sh
+./install.sh
+# or
+bash install.sh
+```
 ## Authentication
 
 Ollama CLI uses Ollama Cloud for model access. You'll need an Ollama API key.
@@ -64,7 +72,7 @@ export OLLAMA_API_KEY="your-api-key-here"
 
 ```bash
 # Start Ollama CLI
-ollama
+ollama-cli
 
 # Select "Use Ollama API Key" when prompted
 # Or set it using /auth > enter your api key
