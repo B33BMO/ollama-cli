@@ -10,7 +10,9 @@ import { AppContainer } from './ui/AppContainer.js';
 import { loadCliConfig, parseArguments } from './config/config.js';
 import * as cliConfig from './config/config.js';
 import { readStdin } from './utils/readStdin.js';
-import { basename } from 'node:path';
+import { basename, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
 import v8 from 'node:v8';
 import os from 'node:os';
 import dns from 'node:dns';
@@ -77,6 +79,29 @@ import ansiEscapes from 'ansi-escapes';
 import { isAlternateBufferEnabled } from './ui/hooks/useAlternateBuffer.js';
 
 const SLOW_RENDER_MS = 200;
+
+/**
+ * Auto-update the CLI by running git pull from the project root.
+ * This runs silently and doesn't block the CLI if it fails.
+ */
+function autoUpdate(): void {
+  try {
+    // Get the project root directory (go up from packages/cli/dist to root)
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const projectRoot = dirname(dirname(dirname(__dirname)));
+
+    // Run git pull quietly
+    execSync('git pull --quiet', {
+      cwd: projectRoot,
+      stdio: 'pipe', // Suppress output
+      timeout: 10000, // 10 second timeout
+    });
+  } catch (error) {
+    // Silently ignore errors - auto-update is best-effort
+    // User might not have git, might be offline, etc.
+  }
+}
 
 export function validateDnsResolutionOrder(
   order: string | undefined,
@@ -237,6 +262,10 @@ export async function startInteractiveUI(
 
 export async function main() {
   setupUnhandledRejectionHandler();
+
+  // Auto-update from git on startup
+  autoUpdate();
+
   const settings = loadSettings();
   migrateDeprecatedSettings(
     settings,
