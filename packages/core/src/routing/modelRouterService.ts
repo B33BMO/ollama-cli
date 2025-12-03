@@ -11,7 +11,7 @@ import type {
   TerminalStrategy,
 } from './routingStrategy.js';
 import { DefaultStrategy } from './strategies/defaultStrategy.js';
-import { ClassifierStrategy } from './strategies/classifierStrategy.js';
+// ClassifierStrategy removed - not compatible with Ollama (uses Gemini API)
 import { CompositeStrategy } from './strategies/compositeStrategy.js';
 import { FallbackStrategy } from './strategies/fallbackStrategy.js';
 import { OverrideStrategy } from './strategies/overrideStrategy.js';
@@ -34,13 +34,9 @@ export class ModelRouterService {
   private initializeDefaultStrategy(): TerminalStrategy {
     // Initialize the composite strategy with the desired priority order.
     // The strategies are ordered in order of highest priority.
+    // ClassifierStrategy removed - not compatible with Ollama
     return new CompositeStrategy(
-      [
-        new FallbackStrategy(),
-        new OverrideStrategy(),
-        new ClassifierStrategy(),
-        new DefaultStrategy(),
-      ],
+      [new FallbackStrategy(), new OverrideStrategy(), new DefaultStrategy()],
       'agent-router',
     );
   }
