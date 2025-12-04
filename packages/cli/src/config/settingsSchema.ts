@@ -1201,9 +1201,21 @@ const SETTINGS_SCHEMA = {
     description: 'Settings for Ollama integration.',
     showInDialog: false,
     properties: {
+      model: {
+        type: 'string',
+        label: 'Model',
+        category: 'Model',
+        requiresRestart: false,
+        default: undefined as string | undefined,
+        description: oneLine`
+          The Ollama model to use for conversations (e.g., llama3.2, qwen2.5-coder, deepseek-r1).
+          Enter the name of any model you have available in your Ollama instance.
+        `,
+        showInDialog: true,
+      },
       baseUrl: {
         type: 'string',
-        label: 'Ollama Base URL',
+        label: 'Base URL',
         category: 'Model',
         requiresRestart: true,
         default: undefined as string | undefined,

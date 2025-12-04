@@ -559,7 +559,9 @@ export async function loadCliConfig(
     : DEFAULT_GEMINI_MODEL;
   const resolvedModel: string =
     argv.model ||
+    process.env['OLLAMA_MODEL'] ||
     process.env['GEMINI_MODEL'] ||
+    settings.ollama?.model ||
     settings.model?.name ||
     defaultModel;
 

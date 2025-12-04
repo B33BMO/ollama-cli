@@ -1,7 +1,7 @@
 name: 'Bug Report'
-description: 'Report a bug to help us improve Gemini CLI'
+description: 'Report a bug to help us improve Blackbox CLI'
 labels:
-  - 'status/need-triage'
+  - 'bug'
 type: 'Bug'
 body:
   - type: 'markdown'
@@ -10,7 +10,7 @@ body:
         > [!IMPORTANT]
         > Thanks for taking the time to fill out this bug report!
         >
-        > Please search **[existing issues](https://github.com/google-gemini/gemini-cli/issues)** to see if an issue already exists for the bug you encountered.
+        > Please search **existing issues** to see if an issue already exists for the bug you encountered.
 
   - type: 'textarea'
     id: 'problem'
@@ -31,12 +31,12 @@ body:
     id: 'info'
     attributes:
       label: 'Client information'
-      description: 'Please paste the full text from the `/about` command run from Gemini CLI. Also include which platform (macOS, Windows, Linux).'
+      description: 'Please paste the full text from the `/about` command. Also include which platform (macOS, Windows, Linux) and which Ollama model you are using.'
       value: |-
         <details>
         <summary>Client Information</summary>
 
-        Run `gemini` to enter the interactive CLI, then run the `/about` command.
+        Run `blackbox` to enter the interactive CLI, then run the `/about` command.
 
         ```console
         > /about
@@ -48,10 +48,10 @@ body:
       required: true
 
   - type: 'textarea'
-    id: 'login-info'
+    id: 'model-info'
     attributes:
-      label: 'Login information'
-      description: 'Describe how you are logging in (e.g., Google Account, API key).'
+      label: 'Model information'
+      description: 'Which Ollama model are you using? (e.g., llama3.2, qwen2.5-coder, deepseek-r1)'
 
   - type: 'textarea'
     id: 'additional-context'
