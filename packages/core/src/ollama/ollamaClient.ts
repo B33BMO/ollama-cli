@@ -64,8 +64,16 @@ export class OllamaClient {
     if (process.env['DEBUG'] || process.env['DEBUG_MODE']) {
       console.error('[OllamaClient] Request URL:', `${this.baseUrl}/api/chat`);
       console.error('[OllamaClient] Request model:', request.model);
-      console.error('[OllamaClient] Request has tools:', !!request.tools);
+      console.error(
+        '[OllamaClient] Request has tools:',
+        !!request.tools,
+        request.tools?.length || 0,
+      );
       console.error('[OllamaClient] Message count:', request.messages?.length);
+      console.error(
+        '[OllamaClient] Full request:',
+        JSON.stringify(requestBody, null, 2).slice(0, 2000),
+      );
     }
 
     const response = await fetch(`${this.baseUrl}/api/chat`, {
