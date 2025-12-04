@@ -27,7 +27,8 @@ export class OllamaClient {
 
   constructor(config: OllamaClientConfig = {}) {
     this.apiKey = (config.apiKey || process.env['OLLAMA_API_KEY'] || '').trim();
-    this.baseUrl = config.baseUrl || process.env['OLLAMA_BASE_URL'] || 'https://ollama.com';
+    this.baseUrl =
+      config.baseUrl || process.env['OLLAMA_BASE_URL'] || 'https://ollama.com';
 
     this.headers = {
       'Content-Type': 'application/json',
@@ -48,9 +49,7 @@ export class OllamaClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Ollama API error (${response.status}): ${errorText}`,
-      );
+      throw new Error(`Ollama API error (${response.status}): ${errorText}`);
     }
 
     return response.json() as Promise<OllamaChatResponse>;
@@ -59,16 +58,31 @@ export class OllamaClient {
   async *chatStream(
     request: OllamaChatRequest,
   ): AsyncGenerator<OllamaChatResponse> {
+    const requestBody = { ...request, stream: true };
+
+    // Debug logging for troubleshooting
+    if (process.env['DEBUG'] || process.env['DEBUG_MODE']) {
+      console.error('[OllamaClient] Request URL:', `${this.baseUrl}/api/chat`);
+      console.error('[OllamaClient] Request model:', request.model);
+      console.error('[OllamaClient] Request has tools:', !!request.tools);
+      console.error('[OllamaClient] Message count:', request.messages?.length);
+    }
+
     const response = await fetch(`${this.baseUrl}/api/chat`, {
       method: 'POST',
       headers: this.headers,
-      body: JSON.stringify({ ...request, stream: true }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
+      // Include more context in error for debugging
+      const debugInfo =
+        process.env['DEBUG'] || process.env['DEBUG_MODE']
+          ? ` [model: ${request.model}, url: ${this.baseUrl}]`
+          : '';
       throw new Error(
-        `Ollama API error (${response.status}): ${errorText}`,
+        `Ollama API error (${response.status}): ${errorText}${debugInfo}`,
       );
     }
 
@@ -106,7 +120,9 @@ export class OllamaClient {
     }
   }
 
-  async generate(request: OllamaGenerateRequest): Promise<OllamaGenerateResponse> {
+  async generate(
+    request: OllamaGenerateRequest,
+  ): Promise<OllamaGenerateResponse> {
     const response = await fetch(`${this.baseUrl}/api/generate`, {
       method: 'POST',
       headers: this.headers,
@@ -115,9 +131,7 @@ export class OllamaClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Ollama API error (${response.status}): ${errorText}`,
-      );
+      throw new Error(`Ollama API error (${response.status}): ${errorText}`);
     }
 
     return response.json() as Promise<OllamaGenerateResponse>;
@@ -134,9 +148,7 @@ export class OllamaClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Ollama API error (${response.status}): ${errorText}`,
-      );
+      throw new Error(`Ollama API error (${response.status}): ${errorText}`);
     }
 
     if (!response.body) {
@@ -173,7 +185,9 @@ export class OllamaClient {
     }
   }
 
-  async embeddings(request: OllamaEmbeddingRequest): Promise<OllamaEmbeddingResponse> {
+  async embeddings(
+    request: OllamaEmbeddingRequest,
+  ): Promise<OllamaEmbeddingResponse> {
     const response = await fetch(`${this.baseUrl}/api/embed`, {
       method: 'POST',
       headers: this.headers,
@@ -182,9 +196,7 @@ export class OllamaClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Ollama API error (${response.status}): ${errorText}`,
-      );
+      throw new Error(`Ollama API error (${response.status}): ${errorText}`);
     }
 
     return response.json() as Promise<OllamaEmbeddingResponse>;
@@ -198,9 +210,7 @@ export class OllamaClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Ollama API error (${response.status}): ${errorText}`,
-      );
+      throw new Error(`Ollama API error (${response.status}): ${errorText}`);
     }
 
     return response.json() as Promise<OllamaListResponse>;
