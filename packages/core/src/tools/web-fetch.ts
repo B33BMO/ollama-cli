@@ -36,15 +36,20 @@ const MAX_CONTENT_LENGTH = 100000;
 /**
  * Parses a prompt to extract valid URLs and identify malformed ones.
  */
-export function parsePrompt(text: string): {
+export function parsePrompt(
+  text: string,
+  extraUrls: string[] = [],
+): {
   validUrls: string[];
   errors: string[];
 } {
-  const tokens = text.split(/\s+/);
+  const tokens = text ? text.split(/\s+/) : [];
   const validUrls: string[] = [];
   const errors: string[] = [];
 
-  for (const token of tokens) {
+  const urlCandidates = [...extraUrls, ...tokens];
+
+  for (const token of urlCandidates) {
     if (!token) continue;
 
     // Heuristic to check if the url appears to contain URL-like chars.
@@ -99,7 +104,11 @@ export interface WebFetchToolParams {
   /**
    * The prompt containing URL(s) (up to 20) and instructions for processing their content.
    */
-  prompt: string;
+  prompt?: string;
+  /**
+   * Optional explicit list of URLs to fetch. Used when the prompt is minimal.
+   */
+  urls?: string[];
 }
 
 class WebFetchToolInvocation extends BaseToolInvocation<
@@ -117,7 +126,10 @@ class WebFetchToolInvocation extends BaseToolInvocation<
   }
 
   private async executeFallback(signal: AbortSignal): Promise<ToolResult> {
-    const { validUrls: urls } = parsePrompt(this.params.prompt);
+    const { validUrls: urls } = parsePrompt(
+      this.params.prompt ?? '',
+      this.params.urls ?? [],
+    );
     // For now, we only support one URL for fallback
     let url = urls[0];
 
@@ -193,10 +205,9 @@ ${textContent}
   }
 
   getDescription(): string {
+    const prompt = this.params.prompt ?? '';
     const displayPrompt =
-      this.params.prompt.length > 100
-        ? this.params.prompt.substring(0, 97) + '...'
-        : this.params.prompt;
+      prompt.length > 100 ? prompt.substring(0, 97) + '...' : prompt;
     return `Processing URLs and instructions from prompt: "${displayPrompt}"`;
   }
 
@@ -210,7 +221,11 @@ ${textContent}
 
     // Perform GitHub URL conversion here to differentiate between user-provided
     // URL and the actual URL to be fetched.
-    const { validUrls } = parsePrompt(this.params.prompt);
+    const { validUrls } = parsePrompt(
+      this.params.prompt ?? '',
+      this.params.urls ?? [],
+    );
+    const prompt = this.params.prompt ?? '';
     const urls = validUrls.map((url) => {
       if (url.includes('github.com') && url.includes('/blob/')) {
         return url
@@ -223,7 +238,7 @@ ${textContent}
     const confirmationDetails: ToolCallConfirmationDetails = {
       type: 'info',
       title: `Confirm Web Fetch`,
-      prompt: this.params.prompt,
+      prompt,
       urls,
       onConfirm: async (outcome: ToolConfirmationOutcome) => {
         if (outcome === ToolConfirmationOutcome.ProceedAlways) {
@@ -235,9 +250,25 @@ ${textContent}
   }
 
   async execute(signal: AbortSignal): Promise<ToolResult> {
-    const userPrompt = this.params.prompt;
-    const { validUrls: urls } = parsePrompt(userPrompt);
+    const prompt = this.params.prompt ?? '';
+    const urlsFromParams = this.params.urls ?? [];
+    const { validUrls: urls } = parsePrompt(prompt, urlsFromParams);
+    const userPrompt =
+      prompt ||
+      `Fetch the following URL(s) and summarize the key information:\n${urls.join('\n')}`;
     const url = urls[0];
+    if (!url) {
+      return {
+        llmContent:
+          "Error: No valid URL provided. Supply at least one http(s) URL in 'prompt' or 'urls'.",
+        returnDisplay:
+          "Error: No valid URL provided. Supply at least one http(s) URL in 'prompt' or 'urls'.",
+        error: {
+          message: 'No valid URL provided.',
+          type: ToolErrorType.WEB_FETCH_NO_URL_IN_PROMPT,
+        },
+      };
+    }
     const isPrivate = isPrivateIp(url);
 
     if (isPrivate) {
@@ -401,8 +432,14 @@ export class WebFetchTool extends BaseDeclarativeTool<
               'A comprehensive prompt that includes the URL(s) (up to 20) to fetch and specific instructions on how to process their content (e.g., "Summarize https://example.com/article and extract key points from https://another.com/data"). All URLs to be fetched must be valid and complete, starting with "http://" or "https://", and be fully-formed with a valid hostname (e.g., a domain name like "example.com" or an IP address). For example, "https://example.com" is valid, but "example.com" is not.',
             type: 'string',
           },
+          urls: {
+            description:
+              'Optional explicit list of URL(s) to fetch. Useful when the prompt is short or does not include URLs directly.',
+            type: 'array',
+            items: { type: 'string' },
+          },
         },
-        required: ['prompt'],
+        required: [],
         type: 'object',
       },
       true, // isOutputMarkdown
@@ -414,11 +451,13 @@ export class WebFetchTool extends BaseDeclarativeTool<
   protected override validateToolParamValues(
     params: WebFetchToolParams,
   ): string | null {
-    if (!params.prompt || params.prompt.trim() === '') {
-      return "The 'prompt' parameter cannot be empty and must contain URL(s) and instructions.";
-    }
+    const prompt = params.prompt ?? '';
+    const urlsFromParams = params.urls ?? [];
+    const { validUrls, errors } = parsePrompt(prompt, urlsFromParams);
 
-    const { validUrls, errors } = parsePrompt(params.prompt);
+    if (!prompt && validUrls.length === 0) {
+      return "Either 'prompt' or 'urls' must be provided.";
+    }
 
     if (errors.length > 0) {
       return `Error(s) in prompt URLs:\n- ${errors.join('\n- ')}`;

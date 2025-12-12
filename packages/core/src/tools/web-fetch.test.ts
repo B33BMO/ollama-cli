@@ -156,7 +156,7 @@ describe('WebFetchTool', () => {
     it('should throw if prompt is empty', () => {
       const tool = new WebFetchTool(mockConfig);
       expect(() => tool.build({ prompt: '' })).toThrow(
-        "The 'prompt' parameter cannot be empty",
+        "Either 'prompt' or 'urls' must be provided.",
       );
     });
 

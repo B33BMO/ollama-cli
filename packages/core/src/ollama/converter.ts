@@ -19,6 +19,65 @@ import type {
   OllamaToolCall,
 } from './types.js';
 
+function parseArgs(rawArgs: unknown): Record<string, unknown> {
+  if (typeof rawArgs === 'string') {
+    try {
+      return JSON.parse(rawArgs) as Record<string, unknown>;
+    } catch (_err) {
+      return { raw: rawArgs };
+    }
+  }
+
+  if (rawArgs && typeof rawArgs === 'object') {
+    return rawArgs as Record<string, unknown>;
+  }
+
+  return {};
+}
+
+function normalizeArgsForRequest(args: unknown): Record<string, unknown> {
+  if (args === undefined || args === null) {
+    return {};
+  }
+
+  if (typeof args === 'string') {
+    try {
+      return JSON.parse(args) as Record<string, unknown>;
+    } catch (_err) {
+      return { raw: args };
+    }
+  }
+
+  if (typeof args === 'object') {
+    return args as Record<string, unknown>;
+  }
+
+  return { value: args };
+}
+
+function formatFunctionResponseContent(response: unknown): string {
+  if (response === undefined || response === null) {
+    return '';
+  }
+  if (typeof response === 'string') {
+    return response;
+  }
+  if (
+    typeof response === 'object' &&
+    response !== null &&
+    'output' in (response as Record<string, unknown>) &&
+    typeof (response as Record<string, unknown>)['output'] === 'string'
+  ) {
+    return (response as Record<string, unknown>)['output'] as string;
+  }
+
+  try {
+    return JSON.stringify(response);
+  } catch (_err) {
+    return String(response);
+  }
+}
+
 /**
  * Converts Gemini Content to Ollama Message format
  */
@@ -30,6 +89,7 @@ export function contentToOllamaMessage(content: Content): OllamaMessage {
   const images: string[] = [];
   const toolCalls: OllamaToolCall[] = [];
   let toolName: string | undefined;
+  let toolCallId: string | undefined;
 
   for (const part of parts) {
     if (!part || typeof part !== 'object') continue;
@@ -44,9 +104,10 @@ export function contentToOllamaMessage(content: Content): OllamaMessage {
       const funcCall = part.functionCall;
       if (funcCall.name) {
         toolCalls.push({
+          id: funcCall.id,
           function: {
             name: funcCall.name,
-            arguments: (funcCall.args as Record<string, unknown>) || {},
+            arguments: normalizeArgsForRequest(funcCall.args),
           },
         });
       }
@@ -54,8 +115,8 @@ export function contentToOllamaMessage(content: Content): OllamaMessage {
       // For function responses, Ollama expects a tool role message with tool_name
       const response = part.functionResponse;
       toolName = response.name;
-      // Convert the response to JSON string for the content
-      textContent += JSON.stringify(response.response);
+      toolCallId = response.id || response.name;
+      textContent += formatFunctionResponseContent(response.response);
     }
   }
 
@@ -75,6 +136,9 @@ export function contentToOllamaMessage(content: Content): OllamaMessage {
   // Add tool_name for tool role messages (function responses)
   if (role === 'tool' && toolName) {
     message.tool_name = toolName;
+    if (toolCallId) {
+      message.tool_call_id = toolCallId;
+    }
   }
 
   return message;
@@ -209,8 +273,10 @@ export function generateParamsToOllamaChatRequest(
 export function ollamaMessageToContent(message: OllamaMessage): Content {
   const parts: Part[] = [];
 
-  // Add text content
-  if (message.content) {
+  const isToolResponse = message.role === 'tool' && !!message.tool_call_id;
+
+  // Add text content (skip for tool responses where we provide a functionResponse)
+  if (message.content && !isToolResponse) {
     parts.push({ text: message.content });
   }
 
@@ -219,15 +285,31 @@ export function ollamaMessageToContent(message: OllamaMessage): Content {
     for (const toolCall of message.tool_calls) {
       parts.push({
         functionCall: {
+          id: toolCall.id,
           name: toolCall.function.name,
-          args: toolCall.function.arguments,
+          args: parseArgs(toolCall.function.arguments),
         } as FunctionCall,
       });
     }
   }
 
+  if (isToolResponse) {
+    parts.push({
+      functionResponse: {
+        name: message.tool_name ?? 'tool',
+        id: message.tool_call_id,
+        response: { output: message.content },
+      },
+    });
+  }
+
   return {
-    role: message.role === 'assistant' ? 'model' : message.role,
+    role:
+      message.role === 'assistant'
+        ? 'model'
+        : message.role === 'tool'
+          ? 'function'
+          : message.role,
     parts,
   };
 }

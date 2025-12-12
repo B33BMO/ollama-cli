@@ -15,12 +15,14 @@ export interface OllamaMessage {
   images?: string[]; // base64 encoded images
   tool_calls?: OllamaToolCall[];
   tool_name?: string; // Required when role is 'tool'
+  tool_call_id?: string; // Identifier linking tool response to request
 }
 
 export interface OllamaToolCall {
+  id?: string;
   function: {
     name: string;
-    arguments: Record<string, unknown>;
+    arguments: Record<string, unknown> | string;
   };
 }
 
