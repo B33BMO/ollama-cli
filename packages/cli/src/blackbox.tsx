@@ -81,10 +81,24 @@ import { isAlternateBufferEnabled } from './ui/hooks/useAlternateBuffer.js';
 const SLOW_RENDER_MS = 200;
 
 /**
+ * Check if running as a Bun compiled binary
+ */
+function isBunBinary(): boolean {
+  // @ts-expect-error globalThis.__isBunBinary is set by the esbuild banner
+  return !!globalThis.__isBunBinary;
+}
+
+/**
  * Auto-update the CLI by running git pull from the project root.
  * This runs silently and doesn't block the CLI if it fails.
+ * Skipped for Bun binaries since they're compiled and not in a git repo.
  */
 function autoUpdate(): void {
+  // Skip auto-update for compiled Bun binaries
+  if (isBunBinary()) {
+    return;
+  }
+
   try {
     // Get the project root directory (go up from packages/cli/dist to root)
     const __filename = fileURLToPath(import.meta.url);
@@ -121,6 +135,11 @@ export function validateDnsResolutionOrder(
 }
 
 function getNodeMemoryArgs(isDebugMode: boolean): string[] {
+  // Skip for Bun binaries - memory management is different and relaunch doesn't work
+  if (isBunBinary() || process.env['GEMINI_CLI_NO_RELAUNCH']) {
+    return [];
+  }
+
   const totalMemoryMB = os.totalmem() / (1024 * 1024);
   const heapStats = v8.getHeapStatistics();
   const currentMaxOldSpaceSizeMb = Math.floor(
@@ -133,10 +152,6 @@ function getNodeMemoryArgs(isDebugMode: boolean): string[] {
     debugLogger.debug(
       `Current heap size ${currentMaxOldSpaceSizeMb.toFixed(2)} MB`,
     );
-  }
-
-  if (process.env['GEMINI_CLI_NO_RELAUNCH']) {
-    return [];
   }
 
   if (targetMaxOldSpaceSizeInMB > currentMaxOldSpaceSizeMb) {

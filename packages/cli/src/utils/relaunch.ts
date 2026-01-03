@@ -31,6 +31,13 @@ export async function relaunchAppInChildProcess(
     return;
   }
 
+  // Skip relaunch for Bun binaries - they don't have the same argv structure
+  // and memory management is handled differently by Bun
+  // @ts-expect-error globalThis.__isBunBinary is set by the esbuild banner
+  if (globalThis.__isBunBinary) {
+    return;
+  }
+
   const runner = () => {
     // process.argv is [node, script, ...args]
     // We want to construct [ ...nodeArgs, script, ...scriptArgs]

@@ -76,7 +76,20 @@ const baseConfig = {
 const cliConfig = {
   ...baseConfig,
   banner: {
-    js: `import { createRequire } from 'module'; const require = createRequire(import.meta.url); globalThis.__filename = require('url').fileURLToPath(import.meta.url); globalThis.__dirname = require('path').dirname(globalThis.__filename);`,
+    // Handle both Node.js and Bun binary environments
+    // In Bun binaries, import.meta.url returns $bunfs paths which don't work for filesystem operations
+    // We detect Bun via globalThis.Bun and use process.execPath (real filesystem path) instead
+    js: `import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const __isBunBinary = typeof globalThis.Bun !== 'undefined' && import.meta.url.includes('$bunfs');
+if (__isBunBinary) {
+  globalThis.__filename = process.execPath;
+  globalThis.__dirname = require('path').dirname(process.execPath);
+} else {
+  globalThis.__filename = require('url').fileURLToPath(import.meta.url);
+  globalThis.__dirname = require('path').dirname(globalThis.__filename);
+}
+globalThis.__isBunBinary = __isBunBinary;`,
   },
   entryPoints: ['packages/cli/index.ts'],
   outfile: 'bundle/blackbox.js',
