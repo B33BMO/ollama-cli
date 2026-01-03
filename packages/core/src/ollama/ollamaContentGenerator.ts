@@ -120,7 +120,9 @@ export class OllamaContentGenerator implements ContentGenerator {
   private convertOllamaResponseToGenerateContentResponse(
     ollamaResponse: OllamaChatResponse,
   ): GenerateContentResponse {
-    const content = ollamaMessageToContent(ollamaResponse.message);
+    const content = ollamaMessageToContent(
+      ollamaResponse.message ?? { role: 'assistant', content: '' },
+    );
 
     // Extract text from content
     const parts = content.parts ? (Array.isArray(content.parts) ? content.parts : [content.parts]) : [];

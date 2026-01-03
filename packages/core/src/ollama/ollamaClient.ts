@@ -40,6 +40,24 @@ export class OllamaClient {
     }
   }
 
+  private parseJsonLine<T>(line: string): T | null {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      return null;
+    }
+
+    const normalized = trimmed.startsWith('data:')
+      ? trimmed.slice('data:'.length).trim()
+      : trimmed;
+
+    try {
+      return JSON.parse(normalized) as T;
+    } catch (_err) {
+      // Ignore malformed lines; they'll be handled by retry/backoff upstream.
+      return null;
+    }
+  }
+
   async chat(request: OllamaChatRequest): Promise<OllamaChatResponse> {
     const response = await fetch(`${this.baseUrl}/api/chat`, {
       method: 'POST',
@@ -112,16 +130,16 @@ export class OllamaClient {
         buffer = lines.pop() || '';
 
         for (const line of lines) {
-          if (line.trim()) {
-            const data = JSON.parse(line) as OllamaChatResponse;
+          const data = this.parseJsonLine<OllamaChatResponse>(line);
+          if (data) {
             yield data;
           }
         }
       }
 
-      if (buffer.trim()) {
-        const data = JSON.parse(buffer) as OllamaChatResponse;
-        yield data;
+      const finalData = this.parseJsonLine<OllamaChatResponse>(buffer);
+      if (finalData) {
+        yield finalData;
       }
     } finally {
       reader.releaseLock();
@@ -177,16 +195,16 @@ export class OllamaClient {
         buffer = lines.pop() || '';
 
         for (const line of lines) {
-          if (line.trim()) {
-            const data = JSON.parse(line) as OllamaGenerateResponse;
+          const data = this.parseJsonLine<OllamaGenerateResponse>(line);
+          if (data) {
             yield data;
           }
         }
       }
 
-      if (buffer.trim()) {
-        const data = JSON.parse(buffer) as OllamaGenerateResponse;
-        yield data;
+      const finalData = this.parseJsonLine<OllamaGenerateResponse>(buffer);
+      if (finalData) {
+        yield finalData;
       }
     } finally {
       reader.releaseLock();

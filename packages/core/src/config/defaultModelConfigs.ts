@@ -97,7 +97,7 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'prompt-completion': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-flash-lite',
+        model: 'gpt-oss:20b-cloud',
         generateContentConfig: {
           temperature: 0.3,
           maxOutputTokens: 16000,
@@ -110,7 +110,7 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'edit-corrector': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-flash-lite',
+        model: 'gpt-oss:20b-cloud',
         generateContentConfig: {
           thinkingConfig: {
             thinkingBudget: 0,
@@ -121,7 +121,7 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'summarizer-default': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-flash-lite',
+        model: 'gpt-oss:20b-cloud',
         generateContentConfig: {
           maxOutputTokens: 2000,
         },
@@ -130,7 +130,7 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'summarizer-shell': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-2.5-flash-lite',
+        model: 'gpt-oss:20b-cloud',
         generateContentConfig: {
           maxOutputTokens: 2000,
         },

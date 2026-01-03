@@ -22,6 +22,29 @@ const TODO_STATUSES = [
   'cancelled',
 ] as const;
 
+function getTodoDescription(todo: { description?: string; task?: string }) {
+  if (typeof todo.description === 'string' && todo.description.trim()) {
+    return todo.description.trim();
+  }
+  if (typeof todo.task === 'string' && todo.task.trim()) {
+    return todo.task.trim();
+  }
+  return null;
+}
+
+function normalizeTodos(
+  todos: WriteTodosToolParams['todos'],
+): Array<Todo & { id?: string }> {
+  return (todos ?? []).map((todo) => {
+    const description = getTodoDescription(todo) ?? '';
+    return {
+      description,
+      status: todo.status,
+      ...(todo.id ? { id: todo.id } : {}),
+    };
+  });
+}
+
 // Inspired by langchain/deepagents.
 export const WRITE_TODOS_DESCRIPTION = `This tool can help you list out the current subtasks that are required to be completed for a given user request. The list of subtasks helps you keep track of the current task, organize complex queries and help ensure that you don't miss any steps. With this list, the user can also see the current progress you are making in executing a given task.
 
@@ -92,7 +115,12 @@ export interface WriteTodosToolParams {
   /**
    * The full list of todos. This will overwrite any existing list.
    */
-  todos: Todo[];
+  todos: Array<
+    Todo & {
+      id?: string;
+      task?: string;
+    }
+  >;
 }
 
 class WriteTodosToolInvocation extends BaseToolInvocation<
@@ -120,21 +148,21 @@ class WriteTodosToolInvocation extends BaseToolInvocation<
     _signal: AbortSignal,
     _updateOutput?: (output: string) => void,
   ): Promise<ToolResult> {
-    const todos = this.params.todos ?? [];
-    const todoListString = todos
+    const normalizedTodos = normalizeTodos(this.params.todos ?? []);
+    const todoListString = normalizedTodos
       .map(
         (todo, index) => `${index + 1}. [${todo.status}] ${todo.description}`,
       )
       .join('\n');
 
     const llmContent =
-      todos.length > 0
+      normalizedTodos.length > 0
         ? `Successfully updated the todo list. The current list is now:\n${todoListString}`
         : 'Successfully cleared the todo list.';
 
     return {
       llmContent,
-      returnDisplay: { todos },
+      returnDisplay: { todos: normalizedTodos },
     };
   }
 }
@@ -166,13 +194,22 @@ export class WriteTodosTool extends BaseDeclarativeTool<
                   type: 'string',
                   description: 'The description of the task.',
                 },
+                task: {
+                  type: 'string',
+                  description: 'Alias for description.',
+                },
+                id: {
+                  type: 'string',
+                  description:
+                    'Optional identifier supplied by the caller (ignored by the tool).',
+                },
                 status: {
                   type: 'string',
                   description: 'The current status of the task.',
                   enum: TODO_STATUSES,
                 },
               },
-              required: ['description', 'status'],
+              required: ['status'],
               additionalProperties: false,
             },
           },
@@ -197,6 +234,9 @@ export class WriteTodosTool extends BaseDeclarativeTool<
               type: 'object',
               properties: {
                 description: {
+                  type: 'string',
+                },
+                id: {
                   type: 'string',
                 },
                 status: {
@@ -227,7 +267,8 @@ export class WriteTodosTool extends BaseDeclarativeTool<
       if (typeof todo !== 'object' || todo === null) {
         return 'Each todo item must be an object';
       }
-      if (typeof todo.description !== 'string' || !todo.description.trim()) {
+      const description = getTodoDescription(todo);
+      if (!description) {
         return 'Each todo must have a non-empty description string';
       }
       if (!TODO_STATUSES.includes(todo.status)) {
